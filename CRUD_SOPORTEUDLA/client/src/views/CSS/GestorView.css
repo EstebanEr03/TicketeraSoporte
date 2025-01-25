@@ -1,0 +1,245 @@
+/* Estilo principal del contenedor */
+body {
+  font-family: Arial, sans-serif;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Estilo del formulario de filtros */
+form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  color: #333;
+}
+
+select {
+  padding: 5px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Estilo de la tabla */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+thead tr {
+  background-color: #007bff;
+  color: white;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  background-color: #007bff;
+  color: white;
+}
+
+td button {
+  background-color: #28a745;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+td button:hover {
+  background-color: #218838;
+}
+
+td button:last-child {
+  background-color: #dc3545;
+}
+
+td button:last-child:hover {
+  background-color: #c82333;
+}
+
+/* Mensaje cuando no hay tickets */
+p {
+  text-align: center;
+  font-size: 18px;
+  color: #555;
+}
+
+/* 🔥 MODAL - Fondo Oscurecido */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: none; /* Se oculta inicialmente */
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* 🔥 Mostrar el modal cuando la clase show está presente */
+.modal-overlay.show {
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+
+/* Modal - Ventana Emergente */
+.modal {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+  width: 40%;
+  max-width: 500px;
+  text-align: center;
+  animation: fadeIn 0.3s ease-in-out;
+  max-height: 80vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.modal.show {
+  display: block;
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Animación de entrada */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Título del Modal */
+.modal h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+/* Lista de tickets en el modal */
+.modal ul {
+  list-style: none;
+  padding: 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* Elementos de la lista */
+.modal li {
+  margin: 10px 0;
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Botones dentro del modal */
+.modal button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 10px 5px;
+  transition: background 0.3s ease-in-out;
+}
+
+.modal button:hover {
+  background-color: #0056b3;
+}
+
+/* Botón de Cancelar */
+.modal button:last-child {
+  background-color: #dc3545;
+}
+
+.modal button:last-child:hover {
+  background-color: #c82333;
+}
+
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.modal-buttons button {
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+  transition: background 0.3s ease-in-out;
+}
+
+.modal-buttons .btn-reasignar {
+  background-color: #007bff;
+  color: white;
+}
+
+.modal-buttons .btn-reasignar:hover {
+  background-color: #0056b3;
+}
+
+.modal-buttons .btn-cancelar {
+  background-color: #dc3545;
+  color: white;
+}
+
+.modal-buttons .btn-cancelar:hover {
+  background-color: #c82333;
+}
