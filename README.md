@@ -178,6 +178,95 @@ Si quieres contribuir:
 
 ---
 
+
+Nueva Sección: Implementación de SOLID y Patrones de Diseño
+📌 Ubicación en el README: Después de la sección "Arquitectura del Proyecto"
+📌 Objetivo: Explicar cómo se aplicaron SOLID y los patrones de diseño Factory Method y Strategy en el backend del sistema.
+
+📌 Implementación de Principios SOLID y Patrones de Diseño
+En el desarrollo del CRUD_SOPORTEUDLA, se han aplicado principios SOLID y patrones de diseño para garantizar una arquitectura más modular, mantenible y escalable.
+
+🔹 Principios SOLID Implementados
+1️⃣ S - Principio de Responsabilidad Única (SRP)
+Cada clase y función en el backend tiene una única responsabilidad.
+✅ Ejemplo:
+
+ticketController.js se encarga solo de manejar las solicitudes HTTP.
+ticketService.js encapsula la lógica de negocio para la gestión de tickets.
+ticketRepository.js maneja directamente las operaciones de base de datos.
+2️⃣ O - Principio de Abierto/Cerrado (OCP)
+El código está diseñado para permitir extensiones sin modificar la estructura existente.
+✅ Ejemplo:
+
+Se pueden agregar nuevas estrategias de selección de agentes sin modificar la lógica base del sistema, gracias al patrón Strategy.
+3️⃣ L - Principio de Sustitución de Liskov (LSP)
+Las estrategias de asignación de agentes pueden reemplazarse sin afectar el código base.
+✅ Ejemplo:
+
+AgentSelector acepta diferentes estrategias (WeightedLoadStrategy, RoundRobinStrategy, LeastLoadStrategy) sin alterar la implementación.
+4️⃣ I - Principio de Segregación de Interfaces (ISP)
+Cada módulo expone solo las funcionalidades necesarias.
+✅ Ejemplo:
+
+ticketRepository.js solo maneja acciones de base de datos.
+ticketService.js solo expone métodos relacionados con la lógica de negocio.
+5️⃣ D - Principio de Inversión de Dependencias (DIP)
+El código no depende directamente de clases concretas, sino de abstracciones.
+✅ Ejemplo:
+
+AgentSelector permite cambiar estrategias sin modificar el código del servicio.
+🔹 Patrones de Diseño Implementados
+🛠 1. Factory Method - Creación de Tickets
+Se ha implementado el Factory Method para la creación de tickets, asegurando una construcción más flexible y escalable.
+
+✅ Ejemplo:
+
+javascript
+Copy
+Edit
+import TicketFactory from '../factories/ticketFactory.js';
+
+// En ticketService.js
+export const createTicket = async (ticketData) => {
+  const ticket = TicketFactory.createTicket(ticketData);
+  return await ticketRepository.createTicket(ticket);
+};
+📌 Beneficio: Permite crear tickets de diferentes tipos sin modificar la lógica del servicio.
+
+🎯 2. Strategy - Selección de Agentes
+El Strategy Pattern permite cambiar la forma en que se asignan los agentes sin modificar el código base.
+
+✅ Ejemplo:
+
+javascript
+Copy
+Edit
+import AgentSelector from './agentSelector.js';
+import { WeightedLoadStrategy, RoundRobinStrategy, LeastLoadStrategy } from '../strategies/agentSelectionStrategies.js';
+
+let strategy;
+if (prioridad === 'Critico') {
+  strategy = new WeightedLoadStrategy();
+} else if (rotacionCiclica) {
+  strategy = new RoundRobinStrategy();
+} else {
+  strategy = new LeastLoadStrategy();
+}
+
+const selector = new AgentSelector(strategy);
+const mejorAgente = selector.select(agentes, prioridad, urgencia);
+📌 Beneficio:
+✔️ Permite seleccionar diferentes estrategias sin modificar la lógica principal.
+✔️ Se pueden añadir nuevas estrategias sin afectar el código existente.
+
+🎯 Conclusión
+✅ SOLID y los patrones de diseño mejoraron la escalabilidad y mantenibilidad del sistema.
+✅ Se separaron responsabilidades correctamente, facilitando modificaciones futuras.
+✅ Se pueden añadir nuevas reglas de negocio sin afectar la estructura actual.
+
+¡Con esta sección, tu README documentará adecuadamente las mejoras arquitectónicas! 🚀
+Si necesitas ajustes o quieres agregar ejemplos más específicos, dime y lo refinamos. 😊
+
 ## Licencia
 
 Este proyecto está licenciado bajo la [Licencia MIT](LICENSE).
