@@ -274,9 +274,8 @@ Esta funcionalidad permite **reasignar de forma masiva** los tickets cuyo plazo 
 ![Pop-up Reasignar Tickets Vencidos](URL_DE_TU_IMAGEN_POPUP)
 
 **Gestión de Tickets con Nuevo Botón**  
-![Gestión de Tickets con Botón para Reasignar](URL_DE_TU_IMAGEN_GESTION)
+![Image](https://github.com/user-attachments/assets/8d43dc37-685a-44b3-bf99-128d25e9ae86)
 
-> Reemplaza `URL_DE_TU_IMAGEN_POPUP` y `URL_DE_TU_IMAGEN_GESTION` con los enlaces reales a tus capturas.
 
 ### Fragmento de Código Destacado
 
