@@ -271,7 +271,7 @@ Esta funcionalidad permite **reasignar de forma masiva** los tickets cuyo plazo 
 ### Capturas de Pantalla
 
 **Pop-up para Reasignar Tickets Vencidos**  
-![Pop-up Reasignar Tickets Vencidos](URL_DE_TU_IMAGEN_POPUP)
+![Image](https://github.com/user-attachments/assets/afe50289-affd-427a-b232-ada43fe71d74)
 
 **Gestión de Tickets con Nuevo Botón**  
 ![Image](https://github.com/user-attachments/assets/8d43dc37-685a-44b3-bf99-128d25e9ae86)
