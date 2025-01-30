@@ -240,6 +240,209 @@ En **CRUD_SOPORTEUDLA**, se han aplicado principios SOLID y patrones de diseño 
 
 ---
 
+A continuación, te dejo un **ejemplo** de cómo podrías documentar esta **nueva funcionalidad** en tu README, resaltando el nuevo pop-up y el proceso de reasignación de tickets vencidos. Ajusta los títulos, enlaces o rutas de las imágenes según tu repositorio y necesidades.
+
+---
+
+## Nueva Funcionalidad: Reasignación de Tickets Vencidos
+
+Esta funcionalidad permite **reasignar de forma masiva** los tickets cuyo plazo de atención ha caducado. Al hacer clic en el botón **“Reasignar Tickets Vencidos”**, se muestra un **pop-up** (modal) con la lista de tickets vencidos. El usuario puede marcar aquellos que desee reasignar y, al confirmar, el sistema asignará automáticamente cada ticket a un nuevo agente siguiendo la lógica establecida en el backend.
+
+### Cómo Funciona
+
+1. **Botón “Reasignar Tickets Vencidos”:**  
+   Desde la vista principal de **Gestión de Tickets**, presiona el botón para obtener la lista de tickets que se encuentran en estado de vencimiento.
+
+
+2. **Visualización de Pop-up:**  
+   Aparece un modal donde se listan todos los tickets vencidos con su respectivo ID, estado y prioridad.
+
+3. **Selección de Tickets:**  
+   El usuario puede marcar (o desmarcar) cada ticket que desee reasignar.
+
+4. **Confirmación de Reasignación:**  
+   Al hacer clic en “Reasignar Seleccionados”, se llamará a la función correspondiente en el backend, que:
+   - Busca un agente disponible según la estrategia de asignación configurada.  
+   - Actualiza el estado del ticket a “En proceso” e ingresa la reasignación en el historial de asignaciones.
+
+5. **Actualización de la Lista:**  
+   Una vez completada la reasignación, la vista se refresca, mostrando los cambios en tiempo real.
+
+### Capturas de Pantalla
+
+**Pop-up para Reasignar Tickets Vencidos**  
+![Pop-up Reasignar Tickets Vencidos](URL_DE_TU_IMAGEN_POPUP)
+
+**Gestión de Tickets con Nuevo Botón**  
+![Gestión de Tickets con Botón para Reasignar](URL_DE_TU_IMAGEN_GESTION)
+
+> Reemplaza `URL_DE_TU_IMAGEN_POPUP` y `URL_DE_TU_IMAGEN_GESTION` con los enlaces reales a tus capturas.
+
+### Fragmento de Código Destacado
+
+En el **backend**, se añadió la función `reasignarTicketsVencidos` que busca los tickets vencidos, selecciona un agente disponible (basado en la prioridad y urgencia) y reasigna el ticket. También registra la reasignación en el historial:
+
+```js
+// Reasignar Tickets Vencidos
+export const reasignarTicketsVencidos = async () => {
+  console.log('Buscando tickets vencidos...');
+  
+  // Obtener tickets vencidos
+  const overdueTickets = await ticketRepository.findOverdueTickets();
+  console.log('Tickets vencidos encontrados:', overdueTickets.map((t) => t.id));
+
+  if (overdueTickets.length === 0) {
+    console.log('No hay tickets vencidos para reasignar.');
+    return { message: 'No hay tickets vencidos para reasignar.' };
+  }
+
+  for (const ticket of overdueTickets) {
+    console.log(`Procesando ticket: ${ticket.id}`);
+    console.log('Buscando agentes disponibles...');
+
+    // Obtener agentes disponibles
+    const agentes = await ticketRepository.findAvailableAgents();
+
+    if (!agentes || agentes.length === 0) {
+      console.warn('No hay agentes disponibles para reasignar el ticket:', ticket.id);
+      continue;
+    }
+
+    console.log('Agentes disponibles:', agentes.map((a) => a.nombre));
+
+    // Seleccionar el mejor agente (lógica interna)
+    const mejorAgente = getBestAgent(agentes, ticket.prioridad, ticket.urgencia);
+
+    console.log('Mejor agente seleccionado:', mejorAgente?.nombre);
+
+    if (!mejorAgente) {
+      console.warn('No se pudo seleccionar un agente para el ticket:', ticket.id);
+      continue;
+    }
+
+    // Actualizar el estado y registrar en el historial
+    await ticketRepository.updateTicket(ticket.id, {
+      estado: 'En proceso',
+      asignado_a: mejorAgente.id,
+    });
+
+    await ticketRepository.createHistoricoAsignacion({
+      ticket_id: ticket.id,
+      agente_id: mejorAgente.id,
+      estado_inicial: ticket.estado,
+      estado_final: 'En proceso',
+      motivo_reasignacion: 'Vencimiento',
+    });
+
+    console.log(`Ticket ${ticket.id} reasignado exitosamente.`);
+  }
+
+  return { message: 'Tickets vencidos reasignados correctamente' };
+};
+```
+
+En el **frontend**, se agregó un **modal** que consume la función `getOverdueTickets` para obtener la lista de tickets vencidos y luego llama a `ReasignarTicket(selectedTickets)` para procesar la reasignación. Un ejemplo resumido:
+
+```jsx
+// Obtener tickets vencidos y mostrar el modal
+const fetchOverdueTickets = async () => {
+  try {
+    const data = await getOverdueTickets();
+    console.log("Tickets vencidos recibidos en el frontend:", data);
+
+    if (!Array.isArray(data)) {
+      throw new Error("La API no devolvió una lista válida de tickets.");
+    }
+
+    setOverdueTickets(data);
+    setShowPopup(true); // Abre el modal
+  } catch (error) {
+    console.error("Error al obtener tickets vencidos:", error);
+    alert("Error al obtener tickets vencidos.");
+    setOverdueTickets([]);
+  }
+};
+
+// Al hacer clic en "Reasignar Seleccionados"
+const handleReassignTickets = async () => {
+  if (selectedTickets.length === 0) {
+    alert("Selecciona al menos un ticket para reasignar.");
+    return;
+  }
+
+  try {
+    await ReasignarTicket(selectedTickets);
+    alert("Tickets reasignados exitosamente.");
+    setShowPopup(false);
+    setSelectedTickets([]);
+    
+    // Refrescar la lista
+    const updatedTickets = await getTickets();
+    setTickets(updatedTickets);
+    setFilteredTickets(updatedTickets);
+  } catch (error) {
+    console.error("Error al reasignar tickets:", error);
+    alert("Error al reasignar tickets.");
+  }
+};
+
+// Lógica del modal
+return (
+  <div>
+    {/* ...botones e interfaz... */}
+
+    <button onClick={fetchOverdueTickets}>
+      Reasignar Tickets Vencidos
+    </button>
+
+    {showPopup && (
+      <div className="modal-overlay">
+        <div className="modal">
+          <h3>Selecciona los tickets vencidos para reasignar</h3>
+          {overdueTickets.length === 0 ? (
+            <p>No hay tickets vencidos disponibles.</p>
+          ) : (
+            <ul>
+              {overdueTickets.map((ticket) => (
+                <li key={ticket.id}>
+                  <input
+                    type="checkbox"
+                    checked={selectedTickets.includes(ticket.id)}
+                    onChange={() => handleSelectTicket(ticket.id)}
+                  />
+                  {` Ticket ID: ${ticket.id} - Estado: ${ticket.estado} - Prioridad: ${ticket.prioridad}`}
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <div className="modal-buttons">
+            <button onClick={handleReassignTickets}>
+              Reasignar Seleccionados
+            </button>
+            <button onClick={() => setShowPopup(false)}>
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+);
+```
+
+### Beneficios
+
+- **Eficiencia:** Permite que el equipo de soporte no pierda tiempo buscando manualmente tickets caducados.  
+- **Flexibilidad:** Se pueden combinar distintas estrategias de asignación (por ejemplo, por prioridad, urgencia o carga de trabajo).  
+- **Trazabilidad:** Queda un historial detallado de la reasignación en la base de datos.
+
+Con este flujo, la reasignación masiva de tickets vencidos se convierte en un proceso ágil y centralizado, permitiendo al equipo de soporte enfocarse en las tareas prioritarias y manteniendo un registro transparente de las reasignaciones realizadas.
+
+---
+
+> **Nota:** Ajusta los enlaces de tus capturas de pantalla, rutas de importaciones y nombres de funciones según la estructura de tu proyecto.
+
 ## Contribución
 
 ¡Las contribuciones son bienvenidas! Para contribuir:
